@@ -11,7 +11,7 @@
   <Target
     Name="VulkanGLSLShaderCompiler"
     Condition="'@(VulkanGLSLShader)' != ''"
-    DependsOnTargets="Build">
+    BeforeTargets="ClCompile">
 
     <Message Importance="High" Text="Building shaders!!!" />
 
