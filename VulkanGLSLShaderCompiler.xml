@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties">
+  <!-- Associate VulkanGLSLShader item type with .hlsl files -->
+  <ItemType Name="VulkanGLSLShader" DisplayName="Vulkan GLSL Shader" />
+  <ContentType Name="VulkanGLSLShader" ItemType="VulkanGLSLShader" DisplayName="Vulkan GLSL Shader" />
+  <FileExtension Name=".vert" ContentType="VulkanGLSLShader" />
+  <FileExtension Name=".frag" ContentType="VulkanGLSLShader" />
+</ProjectSchemaDefinitions>

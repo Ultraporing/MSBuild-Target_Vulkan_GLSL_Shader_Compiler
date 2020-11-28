@@ -1,0 +1,37 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <!-- Include definitions from VulkanGLSLShaderCompiler.xml, which defines the VulkanGLSLShader item. -->
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)VulkanGLSLShaderCompiler.xml" />
+    <!-- Hook up VulkanGLSLShader items to be built by the VulkanGLSLShaderCompiler target. -->
+    <AvailableItemName Include="VulkanGLSLShader">
+      <Targets>VulkanGLSLShaderCompiler</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <Target
+    Name="VulkanGLSLShaderCompiler"
+    Condition="'@(VulkanGLSLShader)' != ''"
+    BeforeTargets="ClCompile">
+
+    <Message Importance="High" Text="Building shaders!!!" />
+
+    <!-- Setup metadata for custom build tool -->
+    <ItemGroup>
+      <VulkanGLSLShader>
+        <Message>%(Filename)%(Extension)</Message>
+        <Command>
+		"$(VULKAN_SDK)\Bin\glslc.exe" "%(FullPath)" -o "$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv"
+        </Command>
+        <Outputs>$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv</Outputs>
+      </VulkanGLSLShader>
+    </ItemGroup>
+
+    <!-- Compile by forwarding to the Custom Build Tool infrastructure,
+         so it will take care of .tlogs and error/warning parsing -->
+    <CustomBuild
+      Sources="@(VulkanGLSLShader)"
+      MinimalRebuildFromTracking="true"
+      TrackerLogDirectory="$(TLogLocation)"
+      ErrorListRegex="(?'FILENAME'.+):(?'LINE'\d+):(?'COLUMN'\d+): (?'CATEGORY'error|warning): (?'TEXT'.*)" />
+  </Target>
+</Project>
