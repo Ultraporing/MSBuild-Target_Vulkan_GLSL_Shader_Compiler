@@ -7,11 +7,11 @@
       <Targets>VulkanGLSLShaderCompiler</Targets>
     </AvailableItemName>
   </ItemGroup>
-
+  
   <Target
     Name="VulkanGLSLShaderCompiler"
     Condition="'@(VulkanGLSLShader)' != ''"
-    BeforeTargets="ClCompile">
+    DependsOnTargets="Build">
 
     <Message Importance="High" Text="Building shaders!!!" />
 
@@ -33,5 +33,14 @@
       MinimalRebuildFromTracking="true"
       TrackerLogDirectory="$(TLogLocation)"
       ErrorListRegex="(?'FILENAME'.+):(?'LINE'\d+):(?'COLUMN'\d+): (?'CATEGORY'error|warning): (?'TEXT'.*)" />
+
+    <!-- Determine the Output Directory for the compiled shaders inside the Output Dir of your application -->
+    <ItemGroup>
+        <BinShaderOutPath Include="$(OutDir)shaders"/>
+    </ItemGroup>
+    
+    <!-- Copy compiled shaders to designated output directory inside the Output Dir of your application -->
+    <Copy SourceFiles="%(VulkanGLSLShader.Outputs)" DestinationFolder="@(BinShaderOutPath)" />
+    
   </Target>
 </Project>
