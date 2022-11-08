@@ -6,8 +6,17 @@
     <AvailableItemName Include="VulkanGLSLShader">
       <Targets>VulkanGLSLShaderCompiler</Targets>
     </AvailableItemName>
+    <AvailableItemName Include="VulkanHLSLShader">
+      <Targets>VulkanHLSLShaderCompiler</Targets>
+    </AvailableItemName>
   </ItemGroup>
-  
+
+
+  <!-- Determine the Output Directory for the compiled shaders inside the Output Dir of your application -->
+  <ItemGroup>
+    <BinShaderOutPath Include="$(OutDir)shaders"/>
+  </ItemGroup>
+
   <Target
     Name="VulkanGLSLShaderCompiler"
     Condition="'@(VulkanGLSLShader)' != ''"
@@ -20,7 +29,7 @@
       <VulkanGLSLShader>
         <Message>%(Filename)%(Extension)</Message>
         <Command>
-		"$(VULKAN_SDK)\Bin\glslc.exe" "%(FullPath)" -o "$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv"
+          "$(VULKAN_SDK)\Bin\glslc.exe" -x glsl "%(FullPath)" -o "$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv"
         </Command>
         <Outputs>$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv</Outputs>
       </VulkanGLSLShader>
@@ -34,13 +43,37 @@
       TrackerLogDirectory="$(TLogLocation)"
       ErrorListRegex="(?'FILENAME'.+):(?'LINE'\d+):(?'COLUMN'\d+): (?'CATEGORY'error|warning): (?'TEXT'.*)" />
 
-    <!-- Determine the Output Directory for the compiled shaders inside the Output Dir of your application -->
-    <ItemGroup>
-        <BinShaderOutPath Include="$(OutDir)shaders"/>
-    </ItemGroup>
-    
     <!-- Copy compiled shaders to designated output directory inside the Output Dir of your application -->
     <Copy SourceFiles="%(VulkanGLSLShader.Outputs)" DestinationFolder="@(BinShaderOutPath)" />
-    
+  </Target>
+  
+  <Target
+    Name="VulkanHLSLShaderCompiler"
+    Condition="'@(VulkanHLSLShader)' != ''"
+    BeforeTargets="ClCompile">
+
+    <Message Importance="High" Text="Building shaders!!!" />
+
+    <!-- Setup metadata for custom build tool -->
+    <ItemGroup>
+      <VulkanHLSLShader>
+        <Message>%(Filename)%(Extension)</Message>
+        <Command>
+          "$(VULKAN_SDK)\Bin\glslc.exe" -x hlsl "%(FullPath)" -o "$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv"
+        </Command>
+        <Outputs>$(ProjectDir)%(RelativeDir)%(Filename)%(Extension).spv</Outputs>
+      </VulkanHLSLShader>
+    </ItemGroup>
+
+    <!-- Compile by forwarding to the Custom Build Tool infrastructure,
+         so it will take care of .tlogs and error/warning parsing -->
+    <CustomBuild
+      Sources="@(VulkanHLSLShader)"
+      MinimalRebuildFromTracking="true"
+      TrackerLogDirectory="$(TLogLocation)"
+      ErrorListRegex="(?'FILENAME'.+):(?'LINE'\d+):(?'COLUMN'\d+): (?'CATEGORY'error|warning): (?'TEXT'.*)" />
+
+    <!-- Copy compiled shaders to designated output directory inside the Output Dir of your application -->
+    <Copy SourceFiles="%(VulkanHLSLShader.Outputs)" DestinationFolder="@(BinShaderOutPath)" />
   </Target>
 </Project>
