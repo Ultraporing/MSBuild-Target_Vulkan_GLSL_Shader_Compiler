@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <!-- Include definitions from VulkanGLSLShaderCompiler.xml, which defines the VulkanGLSLShader item. -->
-    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)VulkanGLSLShaderCompiler.xml" />
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)VulkanGLSLShaderCompiler.xaml" />
     <!-- Hook up VulkanGLSLShader items to be built by the VulkanGLSLShaderCompiler target. -->
     <AvailableItemName Include="VulkanGLSLShader">
       <Targets>VulkanGLSLShaderCompiler</Targets>
